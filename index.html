@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>点击事件录制和回放</title>
+  </head>
+  <body>
+    <button id="startBtn" onclick="startRecording()">开始录制</button>
+    <button id="stopBtn" onclick="stopRecording()">停止录制</button>
+    <button id="playBtn" onclick="playRecording()">回放</button>
+    <button onclick="add1()">click</button>
+    <div
+      style="width: 100px; height: 100px; background: red"
+      onclick="add2()"
+      id="recordedEvents"
+    ></div>
+
+    <script>
+      let a = 0;
+      function add1() {
+        a++;
+        document.getElementById("recordedEvents").innerHTML = a;
+      }
+      function add2() {
+        a++;
+        document.getElementById("recordedEvents").innerHTML = a;
+      }
+
+      let list = [];
+      function clickEventListener() {
+        var x = event.clientX;
+        var y = event.clientY;
+        list.push([x, y]);
+        console.log("点击位置：", x, y);
+      }
+      function startRecording() {
+        setTimeout(() => {
+          document.addEventListener("click", clickEventListener);
+        }, 100);
+      }
+      function stopRecording() {
+        document.removeEventListener("click", clickEventListener);
+      }
+
+      function playRecording() {
+        list.forEach(([x, y]) => {
+          // console.log([x, y]);
+          // var clickEvent = new MouseEvent("click", {
+          //   clientX: x,
+          //   clientY: y,
+          // });
+          // document.dispatchEvent(clickEvent);
+          // 获取要模拟点击的元素
+          var element = document.elementFromPoint(x, y);
+          console.log(element);
+
+          // 创建并触发点击事件
+          var event = document.createEvent("MouseEvents");
+          event.initEvent("click", true, true);
+          element.dispatchEvent(event);
+        });
+        list = [];
+      }
+    </script>
+  </body>
+</html>
