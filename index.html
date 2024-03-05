@@ -26,13 +26,15 @@
       }
 
       let list = [];
+      let startTime;
       function clickEventListener() {
         var x = event.clientX;
         var y = event.clientY;
-        list.push([x, y]);
+        list.push({ coords: [x, y], timeInterval: Date.now() - startTime });
         console.log("点击位置：", x, y);
       }
       function startRecording() {
+        startTime = Date.now();
         setTimeout(() => {
           document.addEventListener("click", clickEventListener);
         }, 100);
@@ -42,21 +44,18 @@
       }
 
       function playRecording() {
-        list.forEach(([x, y]) => {
-          // console.log([x, y]);
-          // var clickEvent = new MouseEvent("click", {
-          //   clientX: x,
-          //   clientY: y,
-          // });
-          // document.dispatchEvent(clickEvent);
+        list.forEach(({ coords, timeInterval }) => {
           // 获取要模拟点击的元素
-          var element = document.elementFromPoint(x, y);
-          console.log(element);
+          setTimeout(() => {
+            const [x, y] = coords;
+            var element = document.elementFromPoint(x, y);
+            console.log(element);
 
-          // 创建并触发点击事件
-          var event = document.createEvent("MouseEvents");
-          event.initEvent("click", true, true);
-          element.dispatchEvent(event);
+            // 创建并触发点击事件
+            var event = document.createEvent("MouseEvents");
+            event.initEvent("click", true, true);
+            element.dispatchEvent(event);
+          }, timeInterval);
         });
         list = [];
       }
